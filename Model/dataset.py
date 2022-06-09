@@ -7,6 +7,7 @@ import numpy as np
 from torchvision import models, transforms
 import random
 import pandas as pd
+from utils import transmission
 
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                          std=[0.229, 0.224, 0.225])
@@ -65,7 +66,12 @@ class ChinaDataset(Dataset):
         meteo_data = data[8:] #["temp", "humidity", "precip", "sealevelpressure", "windspeed", "winddir", "cloudcover", "uvindex"]
 
         img = cv2.imread(img_path)[:, :, ::-1] #convert bgr to rgb
+
+        #DCP
+        trans = transmission(img)
+        trans3d = np.stack((trans,) * 3, axis=-1) #duplicate channel to have a 3d image, resnet expects 3d images, no grayscale
+
         #imagenet standarization and resnet resize
-        input = t(img.copy())
+        input = t(trans3d.copy())
 
         return input, torch.FloatTensor(meteo_data), classification, value
