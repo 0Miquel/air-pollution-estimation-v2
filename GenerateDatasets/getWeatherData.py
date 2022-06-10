@@ -4,6 +4,7 @@ import datetime
 import glob
 import os
 
+from keys import keys
 import argparse
 import sys
 
@@ -13,7 +14,6 @@ args = parser.parse_args(sys.argv[1:])
 
 location = args.location
 
-keys = ["YNBDWUPDH2C5NUVCQ32DD3XNH", "JGG56WXH8X4H5SEXDCCS8RZ8S", "PH9SUQH84BSDCPVBP29KCFM8J"]
 
 for key in keys:
     while True:
