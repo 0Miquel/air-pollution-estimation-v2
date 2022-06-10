@@ -8,11 +8,11 @@ def processWeather(weather_path = "../Datasets/Weather/"):
     dfs = []
     for file_path in files:
         df = pd.read_csv(file_path)
-        df['day'] = pd.DatetimeIndex(df['datetime']).day
-        df['month'] = pd.DatetimeIndex(df['datetime']).month
-        df['year'] = pd.DatetimeIndex(df['datetime']).year
-        df['name'].replace({'Shanghai,China': 'Shanghai'}, inplace=True)
-        df.rename(columns={'name': 'Site', 'year': 'Year', 'month': 'Month', 'day': 'Day'}, inplace=True)
+        df['Day'] = pd.DatetimeIndex(df['datetime']).day
+        df['Month'] = pd.DatetimeIndex(df['datetime']).month
+        df['Year'] = pd.DatetimeIndex(df['datetime']).year
+        df['Name'].replace({'Shanghai,China': 'Shanghai'}, inplace=True)
+        df.rename(columns={'name': 'Site'}, inplace=True)
         dfs.append(df[["Site", 'Year', 'Month', 'Day', "temp", "humidity", "precip", "sealevelpressure", "windspeed", "winddir", "cloudcover", "uvindex"]].copy())
     df_data = pd.concat(dfs)
     df_data = df_data.dropna()

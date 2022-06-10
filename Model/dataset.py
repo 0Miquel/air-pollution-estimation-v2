@@ -25,11 +25,12 @@ image_path, location, year, month, day, hour, Air quality, pollutant_measure
 """
 
 class ChinaDataset(Dataset):
-    def __init__(self, root_path, locations, gt_path, weather_path):
+    def __init__(self, root_path, locations, gt_path, weather_path, dcp=True):
         super().__init__()
         self.gt_path = gt_path
         self.root_path = root_path
         self.locations = locations
+        self.dcp = dcp
 
         #read image data
         img_data = []
@@ -63,15 +64,17 @@ class ChinaDataset(Dataset):
         img_path = data[0]
         classification = data[6]
         value = data[7]
+        #tabular data
         meteo_data = data[8:] #["temp", "humidity", "precip", "sealevelpressure", "windspeed", "winddir", "cloudcover", "uvindex"]
 
-        img = cv2.imread(img_path)[:, :, ::-1] #convert bgr to rgb
+        x = cv2.imread(img_path)[:, :, ::-1] #convert bgr to rgb
 
         #DCP
-        trans = transmission(img)
-        trans3d = np.stack((trans,) * 3, axis=-1) #duplicate channel to have a 3d image, resnet expects 3d images, no grayscale
+        if self.dcp:
+            x = transmission(x)
+            x = np.stack((x,) * 3, axis=-1) #duplicate channel to have a 3d image, resnet expects 3d images, no grayscale
 
         #imagenet standarization and resnet resize
-        input = t(trans3d.copy())
+        input = t(x.copy())
 
         return input, torch.FloatTensor(meteo_data), classification, value
